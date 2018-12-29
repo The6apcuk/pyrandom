@@ -12,7 +12,7 @@ def _create_tree(obj):
 
     try:
         supers = getattr(obj,'__bases__')
-    except:
+    except AttributeError:
         supers = obj.__class__.__bases__
 
     for super_ in supers:
@@ -53,4 +53,4 @@ if __name__ == '__main__':
     class F(D,E):
         pass
 
-    print_tree(F)
+    print_tree(F())
