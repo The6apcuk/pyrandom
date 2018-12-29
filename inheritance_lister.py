@@ -1,3 +1,10 @@
+colors_dict = {"yellow": '\033[94m',
+               "green": '\033[0;32m',
+               "red": "\033[31m",
+               "blue": "\033[34m",
+               "regular": '\033[0m'}
+
+
 class _Node:
     def __init__(self, cur):
         self.cur = cur
@@ -8,12 +15,12 @@ class _Node:
 
 
 def _create_tree(obj):
-    node = _Node(str(obj))
+    node = _Node(obj)
 
-    try:
-        supers = getattr(obj,'__bases__')
-    except AttributeError:
-        supers = obj.__class__.__bases__
+    if isinstance(obj, type):
+        supers = obj.__bases__
+    else:
+        supers = (obj.__class__,)
 
     for super_ in supers:
         node.add_child(_create_tree(super_))
@@ -21,22 +28,29 @@ def _create_tree(obj):
     return node
 
 
-def _draw_tree(root_node, indent=0):
+def _draw_tree(root_node, indent=0, attr_list=False):
     pointer = ''
     if root_node.children:
         pointer = '---|'
 
+    if attr_list:
+        attrs = root_node.cur.__dict__.items()
+        for name, value in attrs:
+            print("{}|{} = {}".format(' ' * indent, name, value))
+
+
     line = '| ---> {}{}'.format(str(root_node.cur), pointer)
 
     cur_len = len(line)-2
-    print(' ' * indent + line)
+    print(' ' * indent + colors_dict['blue'] + line + colors_dict['regular'])
+
 
     for child in root_node.children:
-        _draw_tree(child, (indent + 1) + cur_len)
+        _draw_tree(child, (indent + 1) + cur_len, attr_list=attr_list)
 
 
-def print_tree(obj):
-    _draw_tree(_create_tree(obj))
+def print_tree(obj, attr_list=False):
+    _draw_tree(_create_tree(obj), attr_list=attr_list)
 
 
 if __name__ == '__main__':
@@ -51,6 +65,10 @@ if __name__ == '__main__':
     class E(C):
         pass
     class F(D,E):
+        'aaa'
+        a=1
         pass
 
-    print_tree(F())
+    f=F()
+    f.b=1
+    print_tree(f, True)
