@@ -17,7 +17,14 @@ class _Node:
 def _create_tree(obj):
     node = _Node(obj)
 
-    if isinstance(obj, type):
+    import sys
+    if sys.version_info[:2] > (2,7):
+        class_types = (type,)
+    else:
+        import types
+        class_types = (types.TypeType, types.ClassType)
+
+    if isinstance(obj, class_types):
         supers = obj.__bases__
     else:
         supers = (obj.__class__,)
