@@ -1,4 +1,4 @@
-colors_dict = {"yellow": '\033[94m',
+_colors_dict = {"yellow": '\033[94m',
                "green": '\033[0;32m',
                "red": "\033[31m",
                "blue": "\033[34m",
@@ -41,7 +41,7 @@ def _draw_tree(root_node, indent=0, attr_list=False):
         pointer = '---|'
 
     if attr_list:
-        attrs = root_node.cur.__dict__.items()
+        attrs = root_node.cur.__dict__.items() if hasattr(root_node.cur, '__dict__') else {}
         for name, value in attrs:
             print("{}|{} = {}".format(' ' * indent, name, value))
 
@@ -49,7 +49,7 @@ def _draw_tree(root_node, indent=0, attr_list=False):
     line = '| ---> {}{}'.format(str(root_node.cur), pointer)
 
     cur_len = len(line)-2
-    print(' ' * indent + colors_dict['blue'] + line + colors_dict['regular'])
+    print(' ' * indent + _colors_dict['blue'] + line + _colors_dict['regular'])
 
 
     for child in root_node.children:
